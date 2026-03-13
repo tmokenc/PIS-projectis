@@ -1,0 +1,30 @@
+# Try to build the services to check if they are implemented correctly
+
+name: docker-compose-pr
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+
+jobs:
+  compose-build:
+    name: compose-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Show Docker versions
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Validate compose file
+        run: docker compose config
+
+      - name: Build all services
+        run: docker compose build --no-cache
