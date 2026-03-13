@@ -1,0 +1,10 @@
+.git
+.gitignore
+**/target
+**/node_modules
+**/dist
+**/.dart_tool
+**/bin/*.exe
+**/obj
+**/.DS_Store
+README.md
