@@ -1,0 +1,10 @@
+name: subject_service_dart_template
+description: Subject service gRPC template
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  grpc: ^4.0.1
+  protobuf: ^4.1.0

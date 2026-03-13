@@ -1,0 +1,28 @@
+[package]
+name = "auth-service-rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1"
+bcrypt = "0.16"
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+jsonwebtoken = "9"
+prost = "0.14"
+serde = { version = "1", features = ["derive"] }
+surrealdb = { version = "2", features = ["kv-surrealkv"] }
+tokio = { version = "1", features = ["full"] }
+tonic = { version = "0.14", features = ["transport"] }
+tonic-prost = "0.14"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+opentelemetry = "0.31"
+opentelemetry-otlp = { version = "0.31", features = ["grpc-tonic", "trace"] }
+opentelemetry_sdk = "0.31"
+tracing-opentelemetry = "0.32"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[build-dependencies]
+tonic-prost-build = "0.14"
+protoc-bin-vendored = "3"

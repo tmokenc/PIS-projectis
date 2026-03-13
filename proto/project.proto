@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package project;
+
+import "google/protobuf/timestamp.proto";
+
+service ProjectService {
+  rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
+  rpc GetProject(GetProjectRequest) returns (Project);
+  rpc RegisterTeam(RegisterTeamRequest) returns (Team);
+  rpc AddTeamMember(AddTeamMemberRequest) returns (Team);
+  rpc RemoveTeamMember(RemoveTeamMemberRequest) returns (Team);
+}
+
+message Project {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string teacher_id = 4;
+  uint32 max_students_per_team = 5;
+  google.protobuf.Timestamp start_date = 6;
+  google.protobuf.Timestamp end_date = 7;
+  string subject_id = 8;
+}
+
+message Team {
+  string id = 1;
+  string project_id = 2;
+  string name = 3;
+  string leader_student_id = 4;
+  repeated string student_ids = 5;
+}
+
+message ListProjectsRequest {
+  // filters???
+}
+
+message ListProjectsResponse { repeated Project projects = 1; }
+
+message GetProjectRequest { string project_id = 1; }
+
+message RegisterTeamRequest {
+  string project_id = 1;
+  string creator_student_id = 2;
+}
+
+message AddTeamMemberRequest {
+  string team_id = 1;
+  string student_id = 2;
+}
+
+message RemoveTeamMemberRequest {
+  string team_id = 1;
+  string student_id = 2;
+}

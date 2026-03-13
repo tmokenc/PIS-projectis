@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package auth;
+
+import "common.proto";
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (AuthResponse);
+  rpc Login(LoginRequest) returns (AuthResponse);
+  rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc Logout(LogoutRequest) returns (common.Ack);
+}
+
+
+message User {
+  string id = 1;
+  string firstname = 2;
+  string lastname = 3;
+  string email = 4;
+  common.UserRole role = 5;
+}
+
+message RegisterRequest {
+  string firstname = 1;
+  string lastname = 2;
+  string email = 3;
+  string password = 4;
+  common.UserRole role = 5;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message AuthResponse {
+  string access_token = 1;
+  User user = 2;
+}
+
+message ValidateTokenRequest { string access_token = 1; }
+
+message ValidateTokenResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string email = 3;
+  common.UserRole role = 4;
+}
+
+message GetUserRequest { string user_id = 1; }
+
+message LogoutRequest { string access_token = 1; }

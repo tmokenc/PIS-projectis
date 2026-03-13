@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package notification;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+service NotificationService {
+  rpc CreateNotification(CreateNotificationRequest) returns (Notification);
+  rpc ListNotifications(ListNotificationsRequest)
+      returns (ListNotificationsResponse);
+  rpc MarkAsRead(MarkAsReadRequest) returns (common.Ack);
+}
+
+message Notification {
+  string id = 1;
+  string user_id = 2;
+  string message = 3;
+  google.protobuf.Timestamp date = 4;
+  bool read = 5;
+}
+
+message CreateNotificationRequest {
+  string user_id = 1;
+  string message = 2;
+}
+
+message ListNotificationsRequest { string user_id = 1; }
+
+message ListNotificationsResponse { repeated Notification notifications = 1; }
+
+message MarkAsReadRequest { string notification_id = 1; }

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package subject;
+
+import "common.proto";
+
+service SubjectService {
+  rpc ListSubjects(ListSubjectsRequest) returns (ListSubjectsResponse);
+  rpc GetSubject(GetSubjectRequest) returns (Subject);
+  rpc CreateSubject(CreateSubjectRequest) returns (Subject);
+  rpc UpdateSubject(UpdateSubjectRequest) returns (Subject);
+  rpc DeleteSubject(DeleteSubjectRequest) returns (common.Ack);
+  rpc RegisterStudentToSubject(RegisterStudentToSubjectRequest)
+      returns (common.Ack);
+}
+
+message Subject {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string abbreviation = 4;
+}
+
+message ListSubjectsRequest {}
+
+message ListSubjectsResponse { repeated Subject subjects = 1; }
+
+message GetSubjectRequest { string subject_id = 1; }
+
+message RegisterStudentToSubjectRequest {
+  string subject_id = 1;
+  string student_id = 2;
+}
+
+message CreateSubjectRequest {
+  string name = 1;
+  string description = 2;
+  string abbreviation = 3;
+}
+
+message UpdateSubjectRequest {
+  string subject_id = 1;
+  string name = 2;
+  string description = 3;
+  string abbreviation = 4;
+}
+
+message DeleteSubjectRequest { string subject_id = 1; }

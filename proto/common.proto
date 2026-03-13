@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package common;
+
+message Empty {}
+
+message Ack {
+  bool success = 1;
+  string message = 2;
+}
+
+enum UserRole {
+  USER_ROLE_UNSPECIFIED = 0;
+  USER_ROLE_STUDENT = 1;
+  USER_ROLE_TEACHER = 2;
+  USER_ROLE_ADMIN = 3;
+}

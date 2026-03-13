@@ -1,0 +1,108 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./infra/otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth-service-rust/Dockerfile
+    environment:
+      AUTH_SERVICE_ADDR: 0.0.0.0:50051
+      DB_PATH: /data/auth-db
+      SURREAL_NAMESPACE: university_auth
+      SURREAL_DATABASE: auth
+      JWT_SECRET: super-secret-dev-key
+      SEED_DEMO_USERS: "true"
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_SERVICE_NAME: auth-service
+      RUST_LOG: info
+    depends_on:
+      - otel-collector
+    volumes:
+      - auth_data:/data
+    ports:
+      - "50051:50051"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service-rust/Dockerfile
+    environment:
+      NOTIFICATION_SERVICE_ADDR: 0.0.0.0:50052
+      DB_PATH: /data/notification-db
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_SERVICE_NAME: notification-service
+      RUST_LOG: info
+    depends_on:
+      - otel-collector
+    volumes:
+      - notification_data:/data
+    ports:
+      - "50052:50052"
+  #
+  # subject-service:
+  #   build:
+  #     context: .
+  #     dockerfile: services/subject-service-dart-template/Dockerfile
+  #   environment:
+  #     SUBJECT_SERVICE_PORT: 50053
+  #   depends_on:
+  #     - otel-collector
+  #   ports:
+  #     - "50053:50053"
+  #
+  # project-service:
+  #   build:
+  #     context: .
+  #     dockerfile: services/project-service-dotnet-template/Dockerfile
+  #   environment:
+  #     ASPNETCORE_URLS: http://+:50054
+  #     OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+  #   depends_on:
+  #     - otel-collector
+  #   ports:
+  #     - "50054:50054"
+
+  router:
+    build:
+      context: .
+      dockerfile: services/router-rust/Dockerfile
+    environment:
+      ROUTER_ADDR: 0.0.0.0:8080
+      AUTH_GRPC_ENDPOINT: http://auth-service:50051
+      NOTIFICATION_GRPC_ENDPOINT: http://notification-service:50052
+      SUBJECT_GRPC_ENDPOINT: http://subject-service:50053
+      PROJECT_GRPC_ENDPOINT: http://project-service:50054
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4317
+      OTEL_SERVICE_NAME: router
+      RUST_LOG: info,tower_http=info
+    depends_on:
+      - auth-service
+      - notification-service
+      # - subject-service
+      # - project-service
+      - otel-collector
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        VITE_API_BASE_URL: ""
+        VITE_API_MODE: live
+    depends_on:
+      - router
+    ports:
+      - "3000:80"
+
+volumes:
+  auth_data:
+  notification_data:
