@@ -23,6 +23,10 @@ impl AppError {
     pub fn unauthorized(message: impl Into<String>) -> Self {
         Self::new(StatusCode::UNAUTHORIZED, message)
     }
+
+    pub fn forbidden(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::FORBIDDEN, message)
+    }
 }
 
 impl IntoResponse for AppError {

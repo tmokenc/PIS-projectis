@@ -182,8 +182,8 @@ async fn revoke_token(db: &Db, token: &str) -> anyhow::Result<()> {
 
 async fn is_token_revoked(db: &Db, token: &str) -> anyhow::Result<bool> {
     let mut result = db
-        .query("SELECT * FROM revoked_token WHERE token = $token LIMIT 1;")
-        .bind(("token", token.to_string()))
+        .query("SELECT * FROM revoked_token WHERE token = $lookup_token LIMIT 1;")
+        .bind(("lookup_token", token.to_owned()))
         .await?;
     let rows: Vec<RevokedTokenRecord> = result.take(0)?;
     Ok(!rows.is_empty())

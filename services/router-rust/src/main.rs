@@ -7,9 +7,12 @@ mod proto;
 mod state;
 
 use config::Config;
+use middleware::{require_auth, require_roles};
+use proto::common::UserRole::{Admin, Student, Teacher};
 pub use state::AppState;
 
 use axum::{
+    handler::Handler as _,
     middleware as axum_middleware,
     response::IntoResponse,
     routing::{get, post},
@@ -144,7 +147,7 @@ async fn main() -> anyhow::Result<()> {
         .route("/subjects/{id}", get(handlers::subject::get_subject))
         .route(
             "/subjects/register",
-            post(handlers::subject::register_subject),
+            post(handlers::subject::register_subject.layer(require_roles(&[Student]))),
         )
         .route("/projects", get(handlers::project::list_projects))
         .route("/projects/{id}", get(handlers::project::get_project))
@@ -167,7 +170,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .route_layer(axum_middleware::from_fn_with_state(
             state.clone(),
-            middleware::require_auth,
+            require_auth,
         ));
 
     let app = Router::new()

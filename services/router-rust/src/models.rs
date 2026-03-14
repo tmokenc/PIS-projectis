@@ -3,7 +3,13 @@ use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::proto::{common::Ack, notification::Notification, project::Project, project::Team, subject::Subject};
+use crate::proto::{
+    auth::ValidateTokenResponse,
+    common::{Ack, UserRole},
+    notification::Notification,
+    project::{Project, Team},
+    subject::Subject,
+};
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ApiErrorResponse {
@@ -131,7 +137,7 @@ pub struct CreateNotificationBody {
 pub struct CurrentUser {
     pub user_id: String,
     pub email: String,
-    pub role: String,
+    pub role: UserRole,
 }
 
 #[derive(Debug, Clone)]
@@ -144,6 +150,16 @@ impl From<Ack> for AckDto {
         Self {
             success: value.success,
             message: value.message,
+        }
+    }
+}
+
+impl From<ValidateTokenResponse> for CurrentUser {
+    fn from(value: ValidateTokenResponse) -> Self {
+        Self {
+            user_id: value.user_id,
+            email: value.email,
+            role: UserRole::try_from(value.role).unwrap_or(UserRole::Unspecified),
         }
     }
 }
@@ -237,7 +253,7 @@ pub fn parse_role(role: &str) -> crate::proto::common::UserRole {
         "admin" => UserRole::Admin,
         "teacher" => UserRole::Teacher,
         "student" => UserRole::Student,
-        _ => UserRole::Student,
+        _ => UserRole::Unspecified,
     }
 }
 
