@@ -5,10 +5,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1"
-bcrypt = "0.16"
+bcrypt = "0.19"
 chrono = { version = "0.4", features = ["serde"] }
 dotenvy = "0.15"
-jsonwebtoken = "9"
+jsonwebtoken = { version = "10", features = ["rust_crypto"] }
 prost = "0.14"
 serde = { version = "1", features = ["derive"] }
 surrealdb = { version = "2", features = ["kv-surrealkv"] }

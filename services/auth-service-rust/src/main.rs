@@ -92,9 +92,8 @@ struct RevokedTokenRecord {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct Claims {
     sub: String,
-    email: String,
-    role: String,
     exp: usize,
+    role: String,
 }
 
 type Db = Surreal<LocalDb>;
@@ -190,14 +189,14 @@ async fn is_token_revoked(db: &Db, token: &str) -> anyhow::Result<bool> {
 }
 
 fn create_token(
-    user_id: &RecordId,
-    email: &str,
+    record_id: &RecordId,
     role: &str,
     jwt_secret: &str,
 ) -> Result<String, jsonwebtoken::errors::Error> {
+    let userid = record_id.key().to_string().trim_matches('`').to_string();
+
     let claims = Claims {
-        sub: user_id.to_string(),
-        email: email.to_string(),
+        sub: userid,
         role: role.to_string(),
         exp: (Utc::now() + Duration::hours(12)).timestamp() as usize,
     };
@@ -319,13 +318,8 @@ impl AuthService for AuthGrpc {
         };
 
         let created = insert_user(&self.db, &user).await.map_err(internal)?;
-        let token = create_token(
-            &created.id,
-            &created.email,
-            &created.role,
-            &self.jwt_keys.secret,
-        )
-        .map_err(internal)?;
+        let token =
+            create_token(&created.id, &created.role, &self.jwt_keys.secret).map_err(internal)?;
 
         Ok(Response::new(AuthResponse {
             access_token: token,
@@ -345,8 +339,7 @@ impl AuthService for AuthGrpc {
         if !verify(req.password, &user.password_hash).map_err(internal)? {
             return Err(Status::unauthenticated("invalid credentials"));
         }
-        let token = create_token(&user.id, &user.email, &user.role, &self.jwt_keys.secret)
-            .map_err(internal)?;
+        let token = create_token(&user.id, &user.role, &self.jwt_keys.secret).map_err(internal)?;
         Ok(Response::new(AuthResponse {
             access_token: token,
             user: Some(user.into()),
@@ -370,12 +363,20 @@ impl AuthService for AuthGrpc {
             }));
         }
         match decode_token(&req.access_token, &self.jwt_keys.secret) {
-            Ok(claims) => Ok(Response::new(ValidateTokenResponse {
-                valid: true,
-                user_id: claims.sub,
-                email: claims.email,
-                role: role_to_proto(&claims.role),
-            })),
+            Ok(claims) => {
+                // double check
+                let user = find_user_by_id(&self.db, &claims.sub)
+                    .await
+                    .map_err(internal)?
+                    .ok_or_else(|| Status::unauthenticated("invalid token: user does not exist"))?;
+
+                Ok(Response::new(ValidateTokenResponse {
+                    valid: true,
+                    user_id: user.id.to_string(),
+                    email: user.email,
+                    role: role_to_proto(&user.role),
+                }))
+            }
             Err(_) => Ok(Response::new(ValidateTokenResponse {
                 valid: false,
                 user_id: String::new(),
