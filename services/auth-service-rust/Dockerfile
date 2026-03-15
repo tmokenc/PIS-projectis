@@ -13,6 +13,8 @@ FROM debian:bookworm-slim
 RUN apt-get update     && apt-get install -y --no-install-recommends ca-certificates libssl3     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /app/services/auth-service-rust/target/release/auth-service-rust /usr/local/bin/app
+COPY --from=builder /app/services/auth-service-rust/demo_users.toml /app/demo_users.toml
+
 WORKDIR /app
 RUN mkdir -p /data
 EXPOSE 50051

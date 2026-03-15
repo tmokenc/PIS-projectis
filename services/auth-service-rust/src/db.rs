@@ -35,7 +35,8 @@ impl Db {
         }
 
         let toml_str = std::fs::read_to_string(path)?;
-        let demo_users: Vec<DemoUser> = toml::from_str(&toml_str)?;
+        let parsed: std::collections::HashMap<String, Vec<DemoUser>> = toml::from_str(&toml_str)?;
+        let demo_users = parsed.into_values().flatten().collect::<Vec<DemoUser>>();
 
         for user in demo_users {
             if self.find_user_by_email(&user.email).await?.is_some() {
