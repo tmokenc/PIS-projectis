@@ -162,8 +162,9 @@ async fn main() -> anyhow::Result<()> {
         )
         .route(
             "/notifications",
-            get(handlers::notification::list_notifications)
-                .post(handlers::notification::create_notification),
+            get(handlers::notification::list_notifications).post(
+                handlers::notification::create_notification.layer(require_roles(&[Teacher, Admin])),
+            ),
         )
         .route(
             "/notifications/{id}/read",
