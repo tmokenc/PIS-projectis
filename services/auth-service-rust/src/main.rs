@@ -1,13 +1,13 @@
 mod config;
 mod db;
 mod models;
-mod services;
+mod service;
 
 use config::Config;
 use db::Db;
 use models::JwtKeys;
-use services::auth::auth_service_server::AuthServiceServer;
-use services::AuthGrpc;
+use service::auth::auth_service_server::AuthServiceServer;
+use service::AuthGrpc;
 
 use opentelemetry::trace::TracerProvider as _;
 use opentelemetry_otlp::WithExportConfig;
@@ -26,7 +26,7 @@ async fn main() -> anyhow::Result<()> {
     let db = Db::connect(&config).await?;
 
     if config.seed_demo_users {
-        db.seed_demo_users("demo_user.toml").await?;
+        db.seed_demo_users("./demo_users.toml").await?;
     }
 
     let jwt_keys = JwtKeys {

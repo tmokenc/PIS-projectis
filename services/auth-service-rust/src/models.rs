@@ -1,5 +1,5 @@
-use crate::services::auth::User;
-use crate::services::common::UserRole;
+use crate::service::auth::User;
+use crate::service::common::UserRole;
 use serde::{Deserialize, Serialize};
 use surrealdb::RecordId;
 use tonic::Status;
