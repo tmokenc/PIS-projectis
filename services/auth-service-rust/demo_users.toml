@@ -1,0 +1,20 @@
+[[users]]
+email = "student@example.com"
+password = "student123"
+role = "student"
+firstname = "Demo"
+lastname = "Student"
+
+[[users]]
+email = "teacher@example.com"
+password = "teacher123"
+role = "teacher"
+firstname = "Demo"
+lastname = "Teacher"
+
+[[users]]
+email = "admin@example.com"
+password = "admin123"
+role = "admin"
+firstname = "Demo"
+lastname = "Admin"
