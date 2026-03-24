@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package eval;
+
+import "common.proto";
+import "google/protobuf/timestamp.proto";
+
+service EvaluationService {
+  rpc CreateEvaluation(CreateEvaluationRequest) returns (Evaluation);
+  rpc GetEvaluation(GetEvaluationRequest) returns (Evaluation);
+  rpc ListEvaluations(ListEvaluationsRequest) returns (ListEvaluationsResponse);
+  rpc UpdateEvaluation(UpdateEvaluationRequest) returns (Evaluation);
+  rpc DeleteEvaluation(DeleteEvaluationRequest) returns (common.Ack);
+}
+
+message Evaluation {
+  string id = 1;
+  string project_id = 2;
+  string team_id = 3;
+  string evaluator_teacher_id = 4;
+  double total_score = 5;
+  string feedback = 6;
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+message CreateEvaluationRequest {
+  string project_id = 1;
+  string team_id = 2;
+  string evaluator_teacher_id = 3;
+  string grade = 4;
+  string feedback = 5;
+}
+
+message GetEvaluationRequest { string evaluation_id = 1; }
+
+message ListEvaluationsRequest {
+  string project_id = 1;
+  string student_id = 2;
+  string evaluator_teacher_id = 3;
+}
+
+message ListEvaluationsResponse { repeated Evaluation evaluations = 1; }
+
+message UpdateEvaluationRequest {
+  string evaluation_id = 1;
+  double score = 3;
+  string feedback = 4;
+}
+
+message DeleteEvaluationRequest { string evaluation_id = 1; }
+

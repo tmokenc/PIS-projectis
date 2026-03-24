@@ -8,8 +8,11 @@ service ProjectService {
   rpc ListProjects(ListProjectsRequest) returns (ListProjectsResponse);
   rpc GetProject(GetProjectRequest) returns (Project);
   rpc RegisterTeam(RegisterTeamRequest) returns (Team);
+
   rpc AddTeamMember(AddTeamMemberRequest) returns (Team);
   rpc RemoveTeamMember(RemoveTeamMemberRequest) returns (Team);
+
+  // TODO: Update endpoint, Delete endpoint, Join requests (create, delete, accept)
 }
 
 message Project {

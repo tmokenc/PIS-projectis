@@ -4,6 +4,7 @@ package notification;
 
 import "common.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
 
 service NotificationService {
   rpc CreateNotification(CreateNotificationRequest) returns (Notification);
@@ -21,8 +22,9 @@ message Notification {
 }
 
 message CreateNotificationRequest {
-  string user_id = 1;
+  repeated string user_id = 1;
   string message = 2;
+  google.protobuf.Timestamp timestamp = 3;
 }
 
 message ListNotificationsRequest { string user_id = 1; }
@@ -30,3 +32,5 @@ message ListNotificationsRequest { string user_id = 1; }
 message ListNotificationsResponse { repeated Notification notifications = 1; }
 
 message MarkAsReadRequest { string notification_id = 1; }
+
+// TODO: Send notification to group
