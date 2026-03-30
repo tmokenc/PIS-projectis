@@ -1,0 +1,52 @@
+sequenceDiagram
+    actor Student
+    participant UI as Frontend (Web App)
+    participant SubjectService
+    participant ProjectService
+    participant NotificationService
+    actor TeamLeader
+
+    Student->>UI: Open subject detail page
+    UI->>SubjectService: Get subject  and its projects
+    SubjectService-->>UI: Return project list
+
+    Student->>UI: Select project
+    UI->>ProjectService: Get project detail
+    ProjectService-->>UI: Return project detail & teams
+    UI-->>Student: Display teams
+
+    alt Create new team
+        rect rgb(235, 245, 255)
+            Student->>UI: Create team ""
+            UI->>ProjectService: RegisterTeamRequest
+            ProjectService-->>UI: Team created (return Team detail)
+            UI-->>Student: Display created team
+        end
+
+    else Request to join team
+        rect rgb(255, 255, 230)
+            Student->>UI: Request join
+            UI->>ProjectService: Create join request
+
+            ProjectService->>NotificationService: CreateNotification
+            ProjectService-->>UI: Request submitted successfully
+            UI-->>Student: Join request sent!
+
+            NotificationService-->>TeamLeader: Notify join request
+        end
+
+        alt Request accepted
+            rect rgb(200, 255, 200)
+                TeamLeader->>ProjectService: Accept request
+                ProjectService->>NotificationService: Notify result (Async)
+                ProjectService-->>UI: Update team membership
+                NotificationService-->>Student: Accepted
+            end
+        else Request declined
+            rect rgb(255, 200, 200)
+                TeamLeader->>ProjectService: Decline request
+                ProjectService->>NotificationService: Notify result (Async)
+                NotificationService-->>Student: Declined
+            end
+        end
+    end

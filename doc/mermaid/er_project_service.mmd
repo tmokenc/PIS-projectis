@@ -1,0 +1,40 @@
+erDiagram
+    PROJECT {
+        TEXT id PK "UUID/string"
+        TEXT title "NOT NULL"
+        TEXT description
+        TEXT teacher_id FK "NOT NULL"
+        INT max_students_per_team "NOT NULL"
+        DATETIME start_date "NOT NULL"
+        DATETIME end_date "NOT NULL"
+        TEXT subject_id FK "NOT NULL"
+    }
+
+    TEAM {
+        TEXT id PK "NOT NULL"
+        TEXT project_id PK, FK "NOT NULL"
+        TEXT name "NOT NULL"
+        TEXT leader_student_id FK "NOT NULL"
+        DATETIME created_at_utc "NOT NULL"
+    }
+
+    TEAM_MEMBER {
+        TEXT team_id PK, FK "NOT NULL"
+        TEXT student_id PK, FK "NOT NULL"
+        DATETIME joined_at_utc "NOT NULL"
+    }
+
+    TEAM_JOIN_REQUEST {
+        TEXT id PK "UUID/string"
+        TEXT project FK "NOT NULL"
+        TEXT team_id FK "NOT NULL"
+        TEXT student_id FK "NOT NULL"
+        TEXT status "NOT NULL"
+        TEXT requested_by "NOT NULL"
+        DATETIME created_at_utc "NOT NULL"
+        DATETIME resolved_at_utc
+    }
+
+    PROJECT ||--o{ TEAM : has
+    TEAM ||--o{ TEAM_MEMBER : contains
+    TEAM ||--o{ TEAM_JOIN_REQUEST : has

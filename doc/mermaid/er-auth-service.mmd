@@ -1,0 +1,15 @@
+erDiagram
+
+    USER_RECORD {
+        STRING id PK "UUID/String"
+        STRING firstname "NOT NULL"
+        STRING lastname
+        STRING email "NOT NULL, UNIQUE"
+        STRING password_hash "NOT NULL"
+        STRING role "Student / Teacher / Admin"
+    }
+
+
+    REVOKED_TOKEN {
+        STRING token PK "NOT NULL"
+    }

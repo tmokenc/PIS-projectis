@@ -1,0 +1,22 @@
+erDiagram
+
+    NOTIFICATION_RECORD {
+        STRING id PK "Key (UUID/String)"
+        STRING user_id "User receiving the notification"
+        STRING message "Notification content"
+        DATETIME date "Timestamp of notification"
+        BOOLEAN read "Read status"
+    }
+
+    TO_BE_NOTIFIED_RECORD {
+        DATETIME timestamp PK "Key (scheduled time)"
+        STRING user_id "Recipient user"
+        STRING message "Message to be sent"
+    }
+
+    USER_RECORD {
+        STRING id PK "UUID/String"
+    }
+
+    USER_RECORD ||--o{ NOTIFICATION_RECORD : "receives"
+    USER_RECORD ||--o{ TO_BE_NOTIFIED_RECORD : "scheduled for"

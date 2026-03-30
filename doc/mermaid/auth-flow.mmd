@@ -1,0 +1,12 @@
+stateDiagram
+  direction TB
+  [*] --> ExtractToken
+  ExtractToken --> ValidateToken: call auth service
+  ValidateToken --> ValidateRole:token valid
+  ValidateRole --> Authorized:allowed
+  ValidateRole --> Forbidden:denied
+  ValidateToken --> Unauthorized:token invalid or expired
+  Authorized --> ForwardRequest
+  ForwardRequest --> [*]
+  Forbidden --> [*]
+  Unauthorized --> [*]

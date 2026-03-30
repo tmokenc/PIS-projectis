@@ -1,0 +1,17 @@
+erDiagram
+    PROJECT_EVALUTIONS {
+        TEXT id PK "UUID/string"
+        TEXT project_id FK "UUID/string"
+        TEXT team_id FK "UUID/string"
+        TEXT evaluator_teacher_id FK "UUID/string"
+        FLOAT total_score "NOT NULL"
+        TEXT feedback
+        DATETIME created_ad_utc "NOT NULL"
+    }
+
+    SUBJECT_EVALUATIONS {
+        TEXT id PK "UUID/string"
+        TEXT subject_id FK "UUID/string"
+        TEXT student_id FK "UUID/string"
+        CHAR grade "NOT NULL"
+    }
